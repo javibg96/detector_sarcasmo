@@ -19,10 +19,10 @@ class google_trans:
         translate_box_masc = self.driver.find_element_by_css_selector('#tw-target-text-masculine > span:nth-child(1)')
         traduccion = translate_box.text
         if not traduccion:
-            traduccion_fem = translate_box_fem.text
-            print(f"\ntraduccion fem: {traduccion_fem}")
+            # traduccion_fem = translate_box_fem.text
+            # print(f"\ntraduccion fem: {traduccion_fem}")
             traduccion = translate_box_masc.text
-            print(f"traduccion masc: {traduccion}\n")
+            # print(f"traduccion masc: {traduccion}\n")
         # else:
         # print(f"traduccion: {traduccion}")
         search_box.clear()
