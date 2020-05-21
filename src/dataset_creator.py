@@ -9,7 +9,6 @@ import logging
 
 def traductor_csv(ruta, nombre_fin, idioma, columnas, inicio, fin):
 
-
     google_api = True
     try:
         df = pd.read_csv(ruta)
@@ -50,31 +49,47 @@ def traductor_csv(ruta, nombre_fin, idioma, columnas, inicio, fin):
             else:
                 df_trans = sele_translation(traductor, sentence, index, inicio, df_trans, ruta+nombre_fin)
         except:
+            print("\nFallo en la API de Google, te has quedado sin intentos.\n")
             google_api = False
+            error_handler()
             df_trans = sele_translation(traductor, sentence, index, inicio, df_trans, ruta+nombre_fin)
 
     print("\n\n----PROCESO FINALIZADO-------\n")
+
     ruta_temp = "../entreno_sarcasmo/entrenamiento-equilibrado-sarcasmo.csv"
     df_trad = pd.read_csv(ruta_temp)
+    print(df_trad.tail())
     df_trad = df_trad.append(df_trans)
     df_trad.to_csv(ruta_temp, sep='|', index=False, header=True)
+
     traductor.exit_browser()
     # print(df_trans.head())
     print(f"ACUERDATE DE QUE EMPIEZASTE EN {inicio}, buen dia")
 
 
 def sele_translation(traductor, sentence, index, inicio,df_trans, ruta_fin):
+
     frase = traductor.translate_into_esp(sentence)
     df_trans = df_trans.replace(sentence, frase)
+
     if not frase:
-        print(f"\n\nCHEEEEEEEEEECK {index}  !!!!!!!!!!!!!!!!!!!!!!!!\n\n")
+        print(f"\n\nCHEEEEEEEEEECK {index}  !!!!!!!!!!!!!!!!!!!!!!!!\n")
+        print(f"Tweet to check: {sentence}\n")
+
     if index % 500 == 0 and index != inicio:
         print(f"\nYa he traducido {index}\n")
 
-        df_trans.to_csv(ruta_fin, sep='|',
-                        index=False, header=True)
+        df_trans.to_csv(ruta_fin, sep='|', index=False, header=True)
+
     if index % 2000 == 0 and index != inicio:
         traductor.exit_browser()
         traductor = src.googletrans_scrap.google_trans()
         df_trans.to_csv(ruta_fin, sep='|', index=False, header=True)
+
     return df_trans
+
+
+def error_handler():
+    f = open("troll.txt", "r")
+    print(f.read())
+    f.close()
