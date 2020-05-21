@@ -76,7 +76,5 @@ def sele_translation(traductor, sentence, index, inicio,df_trans, ruta_fin):
     if index % 2000 == 0 and index != inicio:
         traductor.exit_browser()
         traductor = src.googletrans_scrap.google_trans()
-        df_trans.to_csv(ruta_fin, sep='|',
-                        index=False,
-                        header=True)
+        df_trans.to_csv(ruta_fin, sep='|', index=False, header=True)
     return df_trans
