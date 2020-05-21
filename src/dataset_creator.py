@@ -32,7 +32,7 @@ def traductor_csv(ruta, nombre_fin, idioma, columnas, inicio, fin):
         frase = google_translator.translate(sentence, dest=idioma)
         print(frase + ": api OK, continuamos")
     except:
-        print("todo correcto, google api no funciona asi que trabajamos con Selenium")
+        print("\nFallo controlado en la API de Google, asi que empezamos con Selenium")
         traductor = src.googletrans_scrap.google_trans()
         # ponerle un tiempo estimado seria de pro
         google_api = False
@@ -53,11 +53,14 @@ def traductor_csv(ruta, nombre_fin, idioma, columnas, inicio, fin):
             google_api = False
             df_trans = sele_translation(traductor, sentence, index, inicio, df_trans, ruta+nombre_fin)
 
-    print("\n\n----PROCESO FINALIZADO-------")
-    df_trans.to_csv(ruta_fin, sep='|', index=False, header=True)
+    print("\n\n----PROCESO FINALIZADO-------\n")
+    ruta_temp = "../entreno_sarcasmo/entrenamiento-equilibrado-sarcasmo.csv"
+    df_trad = pd.read_csv(ruta_temp)
+    df_trad = df_trad.append(df_trans)
+    df_trad.to_csv(ruta_temp, sep='|', index=False, header=True)
     traductor.exit_browser()
     # print(df_trans.head())
-    print(f"ACUERDATE DE QUE EMPIEZAS EN {inicio}")
+    print(f"ACUERDATE DE QUE EMPIEZASTE EN {inicio}, buen dia")
 
 
 def sele_translation(traductor, sentence, index, inicio,df_trans, ruta_fin):
@@ -70,7 +73,7 @@ def sele_translation(traductor, sentence, index, inicio,df_trans, ruta_fin):
 
         df_trans.to_csv(ruta_fin, sep='|',
                         index=False, header=True)
-    if index % 1000 == 0 and index != inicio:
+    if index % 2000 == 0 and index != inicio:
         traductor.exit_browser()
         traductor = src.googletrans_scrap.google_trans()
         df_trans.to_csv(ruta_fin, sep='|',
