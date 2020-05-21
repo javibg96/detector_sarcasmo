@@ -1,3 +1,5 @@
+# ESTE SCRIPT ES SOLO CON APIS, LA DE GOOGLE Y TRANSLATE, MAXIMO 4000 QUERY ENTRE LAS 2 CREO
+
 from googletrans import Translator
 import translate
 import pandas as pd

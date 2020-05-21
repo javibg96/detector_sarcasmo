@@ -1,0 +1,3 @@
+googletrans2
+selenium
+pandas >= 0.25.3
