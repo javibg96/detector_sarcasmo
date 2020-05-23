@@ -59,7 +59,7 @@ def metodo_intro_terminal():
             print("Introduce un numero válido")
     print(f"\nInicio: {inicio}, Fin: {fin}\n")
 
-    checkNoche = input("\nQuieres que me apague al acabar?: \n")
+    checkNoche = input("\nQuieres que me apague al acabar?: (si/no) \n")
     if checkNoche.lower() == "si" or checkNoche.lower() == "yes":
         noche = True
     else:

@@ -4,10 +4,14 @@
 import src.googletrans_scrap
 from googletrans import Translator
 import pandas as pd
+from tqdm import tqdm
 import logging
 
 
 def traductor_csv(ruta, nombre_fin, idioma, columnas, inicio, fin):
+    ruta_split = ruta.split("/")
+    nombre_ini = ruta_split[-1]
+    ruta_fin = ruta.replace(nombre_ini, nombre_fin)
 
     google_api = True
     try:
@@ -28,36 +32,39 @@ def traductor_csv(ruta, nombre_fin, idioma, columnas, inicio, fin):
     try:
         sentence = "testing google api"
         google_translator = Translator()
-        frase = google_translator.translate(sentence, dest=idioma)
-        print(frase + ": api OK, continuamos")
-    except:
+        frase = google_translator.translate(sentence, dest=idioma).text
+        print(str(frase) + ": api OK, continuamos")
+    except Exception as e:
         print("\nFallo controlado en la API de Google, asi que empezamos con Selenium")
+        logging.error(f"Error en la API de Google: {e.args}")
         traductor = src.googletrans_scrap.google_trans()
         # ponerle un tiempo estimado seria de pro
         google_api = False
 
-    for index, row in df_clean.iterrows():
+    for index, row in tqdm(df_clean.iterrows(), total=df_clean.shape[0]):
         sentence = df_clean.iloc[index - inicio]['parent_comment']
         try:
             # print(f"frase eng: {sentence}")
-            if index - inicio < 2999 and google_api:
+            if index - inicio < 1000 and google_api:
                 google_translator = Translator()
-                frase = google_translator.translate(sentence, dest=idioma)
+                frase = google_translator.translate(sentence, dest=idioma).text
                 df_trans = df_trans.replace(sentence, frase)
                 # if frase == "":
                 # añadir lo de exceso de caracteres y tal
             else:
-                df_trans = sele_translation(traductor, sentence, index, inicio, df_trans, ruta+nombre_fin)
-        except:
+                df_trans = sele_translation(traductor, sentence, index, inicio, df_trans, ruta_fin)
+        except Exception as e:
             print("\nFallo en la API de Google, te has quedado sin intentos.\n")
+            logging.error(f"error: {type(e)} : {e.args}")
             google_api = False
             error_handler()
-            df_trans = sele_translation(traductor, sentence, index, inicio, df_trans, ruta+nombre_fin)
+            traductor = src.googletrans_scrap.google_trans()
+            df_trans = sele_translation(traductor, sentence, index, inicio, df_trans, ruta_fin)
 
     print("\n\n----PROCESO FINALIZADO-------\n")
 
     ruta_temp = "../entreno_sarcasmo/entrenamiento-equilibrado-sarcasmo.csv"
-    df_trad = pd.read_csv(ruta_temp)
+    df_trad = pd.read_csv(ruta_temp, sep="|")
     print(df_trad.tail())
     df_trad = df_trad.append(df_trans)
     df_trad.to_csv(ruta_temp, sep='|', index=False, header=True)
@@ -67,18 +74,17 @@ def traductor_csv(ruta, nombre_fin, idioma, columnas, inicio, fin):
     print(f"ACUERDATE DE QUE EMPIEZASTE EN {inicio}, buen dia")
 
 
-def sele_translation(traductor, sentence, index, inicio,df_trans, ruta_fin):
-
+def sele_translation(traductor, sentence, index, inicio, df_trans, ruta_fin):
     frase = traductor.translate_into_esp(sentence)
     df_trans = df_trans.replace(sentence, frase)
 
     if not frase:
-        print(f"\n\nCHEEEEEEEEEECK {index}  !!!!!!!!!!!!!!!!!!!!!!!!\n")
-        print(f"Tweet to check: {sentence}\n")
+        # print(f"\n\nCHEEEEEEEEEECK {index}  !!!!!!!!!!!!!!!!!!!!!!!!\n")
+        logging.warning(f"Tweet to check: \nIndex: {index}\nTweet: {sentence}\n")
 
     if index % 500 == 0 and index != inicio:
-        print(f"\nYa he traducido {index}\n")
 
+        logging.info(f"\nYa he traducido {index}\n")
         df_trans.to_csv(ruta_fin, sep='|', index=False, header=True)
 
     if index % 2000 == 0 and index != inicio:
@@ -90,6 +96,6 @@ def sele_translation(traductor, sentence, index, inicio,df_trans, ruta_fin):
 
 
 def error_handler():
-    f = open("troll.txt", "r")
+    f = open("src/troll.txt", "r")
     print(f.read())
     f.close()

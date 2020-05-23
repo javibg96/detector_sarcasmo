@@ -19,14 +19,14 @@ try:
         [ruta, nombre_fin, lang, columnas, inicio, fin, noche] = metodo_intro_terminal()
     else:
         ruta = "../entreno_sarcasmo/train-balanced-sarcasm.csv"
-        nombre_fin = "train-balanced-sarcasm-temp.csv"
+        nombre_fin = "entrenamiento-equilibrado-sarcasmo-temp.csv"
         lang = "es"
         columnas = ['label', 'parent_comment']
-        inicio, fin = 8001, 10001
-        noche = True
+        inicio, fin = 16001, 29001
+        noche = False
 
     traductor_csv(ruta, nombre_fin, lang, columnas, inicio, fin)
-    if noche:
+    if noche:     # no me digas por que no funciona
         os.system("shutdown /s /t 1")  # como tarda mucho, para que se apague solo si lo dejas corriendo x la noche
 
 except:
