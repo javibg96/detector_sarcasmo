@@ -4,6 +4,8 @@
 import src.googletrans_scrap
 from googletrans import Translator
 import pandas as pd
+import time
+import translate
 from tqdm import tqdm
 import logging
 
@@ -45,19 +47,34 @@ def traductor_csv(ruta, nombre_fin, idioma, columnas, inicio, fin):
         sentence = df_clean.iloc[index - inicio]['parent_comment']
         try:
             # print(f"frase eng: {sentence}")
-            if index - inicio < 1000 and google_api:
+            if index - inicio < 1000 and google_api and len(sentence) < 200:
                 google_translator = Translator()
                 frase = google_translator.translate(sentence, dest=idioma).text
                 df_trans = df_trans.replace(sentence, frase)
                 # if frase == "":
                 # añadir lo de exceso de caracteres y tal
             else:
-                df_trans = sele_translation(traductor, sentence, index, inicio, df_trans, ruta_fin)
+                try:
+                    df_trans = sele_translation(traductor, sentence, index, inicio, df_trans, ruta_fin)
+                except Exception as e:
+                    logging.error(f"error en sele_translator: {type(e)} : {e.args}, index: {index}")
         except Exception as e:
-            print("\nFallo en la API de Google, te has quedado sin intentos.\n")
-            logging.error(f"error: {type(e)} : {e.args}")
-            google_api = False
-            error_handler()
+            logging.error(f"Error con la api de Google: {type(e)} : {e.args}")
+            print("\nFallo en la API de Google, reintentamos....\n")
+            try:
+                if len(sentence) < 200:
+                    google_translator = Translator()
+                    frase = google_translator.translate(sentence, dest=idioma).text
+                    df_trans = df_trans.replace(sentence, frase)
+                else:
+                    if traductor is None:
+                        traductor = src.googletrans_scrap.google_trans()
+                    df_trans = sele_translation(traductor, sentence, index, inicio, df_trans, ruta_fin)
+
+            except Exception as e:
+                logging.error(f"error: {type(e)} : {e.args}")
+                google_api = False
+                # error_handler()
             traductor = src.googletrans_scrap.google_trans()
             df_trans = sele_translation(traductor, sentence, index, inicio, df_trans, ruta_fin)
 
@@ -71,25 +88,26 @@ def traductor_csv(ruta, nombre_fin, idioma, columnas, inicio, fin):
 
     traductor.exit_browser()
     # print(df_trans.head())
-    print(f"ACUERDATE DE QUE EMPIEZASTE EN {inicio}, buen dia")
+    print(f"ACUERDATE DE QUE EMPEZASTE EN {inicio}, buen dia")
 
 
 def sele_translation(traductor, sentence, index, inicio, df_trans, ruta_fin):
     frase = traductor.translate_into_esp(sentence)
-    df_trans = df_trans.replace(sentence, frase)
 
     if not frase:
-        # print(f"\n\nCHEEEEEEEEEECK {index}  !!!!!!!!!!!!!!!!!!!!!!!!\n")
-        logging.warning(f"Tweet to check: \nIndex: {index}\nTweet: {sentence}\n")
+        traductor = translate.Translator(to_lang="es")
+        frase = traductor.translate(sentence)
+        logging.warning(f"Tweet a revisar: \nIndex: {index}\nTweet: {sentence}\ntranslation2: {frase}\n")
+
+    df_trans = df_trans.replace(sentence, frase)
 
     if index % 500 == 0 and index != inicio:
-
-        logging.info(f"\nYa he traducido {index}\n")
+        logging.info(f"Ya he traducido hasta la fila {index}\n")
         df_trans.to_csv(ruta_fin, sep='|', index=False, header=True)
 
     if index % 2000 == 0 and index != inicio:
         traductor.exit_browser()
-        traductor = src.googletrans_scrap.google_trans()
+        # traductor = src.googletrans_scrap.google_trans()
         df_trans.to_csv(ruta_fin, sep='|', index=False, header=True)
 
     return df_trans

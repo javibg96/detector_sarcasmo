@@ -22,8 +22,8 @@ try:
         nombre_fin = "entrenamiento-equilibrado-sarcasmo-temp.csv"
         lang = "es"
         columnas = ['label', 'parent_comment']
-        inicio, fin = 16001, 29001
-        noche = False
+        inicio, fin = 22001, 35001
+        noche = True
 
     traductor_csv(ruta, nombre_fin, lang, columnas, inicio, fin)
     if noche:     # no me digas por que no funciona
