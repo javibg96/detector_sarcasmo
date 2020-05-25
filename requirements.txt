@@ -1,6 +1,7 @@
 googletrans2
 selenium~=3.141.0
 pandas >= 0.25.3
+ruamel.yaml>=0.15.96
 tqdm~=4.46.0
 translate~=3.5.0
 setuptools~=41.2.0

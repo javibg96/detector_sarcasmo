@@ -1,0 +1,8 @@
+config_version: 1.0
+ruta: ../entreno_sarcasmo/train-balanced-sarcasm.csv
+nombre_fin: entrenamiento-equilibrado-sarcasmo-temp.csv
+lang: es
+columnas: ['label', 'parent_comment']
+inicio: 36501
+fin: 40001
+noche: False

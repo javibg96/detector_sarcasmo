@@ -65,4 +65,12 @@ def metodo_intro_terminal():
     else:
         noche = False
         print("\n..Empezamos..")
-    return [ruta, nombre_fin, lang, columnas, inicio, fin, noche]
+
+    config = {"ruta": ruta,
+              "nombre_fin": nombre_fin,
+              "lang": lang,
+              "columnas": columnas,
+              "inicio": inicio,
+              "fin": fin,
+              "noche": noche}
+    return config
