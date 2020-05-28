@@ -49,7 +49,6 @@ def traductor_csv(terminalMethod=False):
     except Exception as e:
         logging.error(f"Error en la API de Google: {e.args}")
         traductor = src.googletrans_scrap.google_trans()
-        # ponerle un tiempo estimado seria de pro
         google_api = False
 
     for index, row in tqdm(df_clean.iterrows(), total=df_clean.shape[0]):
@@ -89,7 +88,7 @@ def traductor_csv(terminalMethod=False):
                 if traductor is not None:
                     traductor.exit_browser()
                 google_api = False
-                # error_handler()
+                error_handler()
             traductor = src.googletrans_scrap.google_trans()
             df_trans = sele_translation(traductor, sentence, index, inicio, df_trans, ruta_temp)
 
