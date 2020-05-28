@@ -131,3 +131,4 @@ dmypy.json
 .idea
 train-balanced-sarcasm.csv
 /train-balanced-sarcasm.csv
+src/creds.cfg

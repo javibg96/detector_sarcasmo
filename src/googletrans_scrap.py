@@ -13,7 +13,7 @@ class google_trans:
     def translate_into_esp(self, tweet):
         search_box = self.driver.find_element_by_xpath('//*[@id="tw-source-text-ta"]')
         search_box.send_keys(tweet)
-        time.sleep(2)
+        time.sleep(1.7)
         translate_box = self.driver.find_element_by_css_selector('#tw-target-text')
         translate_box_fem = self.driver.find_element_by_css_selector('#tw-target-text-feminine > span:nth-child(1)')
         translate_box_masc = self.driver.find_element_by_css_selector('#tw-target-text-masculine > span:nth-child(1)')
@@ -25,8 +25,8 @@ class google_trans:
             # print(f"traduccion masc: {traduccion}\n")
         # else:
         # print(f"traduccion: {traduccion}")
+        time.sleep(0.4)
         search_box.clear()
-        time.sleep(1)
         return traduccion
 
     def exit_browser(self):

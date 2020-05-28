@@ -1,3 +1,5 @@
+# este script es solo testing, no se usa en el script principal
+
 import time
 from selenium import webdriver
 

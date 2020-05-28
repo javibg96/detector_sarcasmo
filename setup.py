@@ -9,7 +9,7 @@ with open(os.path.join(os.path.dirname(__file__), 'requirements.txt')) as f:
 
 setup(
     name='Traductor_csv',
-    version="1.1",
+    version="1.3",
     packages=traduc_packages,
     include_package_data=True,
     package_dir={"traductor_csv": "src"},

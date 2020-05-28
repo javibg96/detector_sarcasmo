@@ -1,0 +1,11 @@
+config_version: 1.0
+ruta: ../entreno_sarcasmo/train-balanced-sarcasm.csv
+nombre_fin: entrenamiento-equilibrado-sarcasmo.csv
+lang: es
+columnas:
+- label
+- parent_comment
+columna_a_traducir: parent_comment
+inicio: 70000
+fin: 74000
+noche: false
