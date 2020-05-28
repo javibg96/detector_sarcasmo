@@ -4,8 +4,8 @@ from ruamel import yaml
 import logging
 
 
-def overwrite_yml(config_path, cfg):
-    with open(config_path, 'w') as yaml_file:
+def overwrite_yml(cfg):
+    with open("trad_config.yml", 'w') as yaml_file:
         yaml_file.write(yaml.round_trip_dump(cfg, default_flow_style=False, allow_unicode=True))
 
 
